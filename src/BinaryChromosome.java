@@ -1,16 +1,14 @@
 import java.util.Random;
 
 public class BinaryChromosome implements Chromosome {
-    protected int [] bits;
-    private Random random = new Random ();
+    protected int[] bits;
+    private final Random random = new Random ();
 
-    public BinaryChromosome (int numbits) {
-        bits = new int [numbits];
-    }
+    public BinaryChromosome(int numbits) { bits = new int[numbits]; }
 
-    public void randomize () {
-        for (int i = 0; i < bits.length; i++) bits[i] = random.nextInt(2);
-    }
+    public void randomize() { for (int i = 0; i < bits.length; i++) bits[i] = random.nextInt(2); }
+
+    public int[] getBits() { return bits; }
 
     @Override
     public void mutate(double mutationRate) {
@@ -34,11 +32,11 @@ public class BinaryChromosome implements Chromosome {
             second = temp;
         }
 
-        for (int i = 0; i < first; i++) newChromosome.bits[i] = bits[i];
+        System.arraycopy(bits, 0, newChromosome.bits, 0, first);
 
-        for (int i = first; i < second; i++) newChromosome.bits[i] = other.bits[i];
+        System.arraycopy(other.bits, first, newChromosome.bits, first, second - first);
 
-        for (int i = second; i < bits.length; i++) newChromosome.bits[i] = bits[i];
+        if (bits.length - second >= 0) System.arraycopy(bits, second, newChromosome.bits, second, bits.length - second);
 
         return newChromosome;
     }
@@ -46,15 +44,13 @@ public class BinaryChromosome implements Chromosome {
     @Override
     public double getFitness() {
         // calculate the maximum integer the given number of bits can represent
-        int maxInt = (2^bits.length) - 1;
+        int maxInt = (int)Math.pow(2, bits.length);
 
         // convert this chromosome's array of bits into the integer it represents (using provided .getNumber function)
-        int thisInt = this.getNumber(bits[0], bits[bits.length - 1]);
-        // could also be written: int thisInt = Integer.parseInt(String.valueOf(bits), 2);
+        int thisInt = this.getNumber(0, bits.length-1);
 
-        // check how close thisInt is to maxInt as a percentage, which represents the fitness of this particular chromosome. (0 being worst, 1 being exactly the maximum)
-        double fitness = thisInt/maxInt;
-        return fitness;
+        // return how close thisInt is to maxInt as a percentage, which represents the fitness of this particular chromosome. (0 being worst, 1 being exactly the maximum)
+        return thisInt/(double)maxInt;
     }
 
     public int getNumber (int first, int last) {
