@@ -1,10 +1,10 @@
-public class main {
+public class Main {
     public static void main(String[] args) {
         //region Config
         int popSize = 100; // number of Chromosomes in the population (100 is recommended starting point, but tweak as needed)
-        int numGenerations = 100000; // number of iterations the program will run (100k is recommended starting point, but tweak as needed)
-        double fitnessGoal = .75; // desired fitness level (.99999 used as default for BinaryChromosome implementation)
-        double mutationRate = 0.5;
+        int numGenerations = 10000; // number of iterations the program will run (100k is recommended starting point, but tweak as needed)
+        double fitnessGoal = .99999; // desired fitness level (.98 used as default for BinaryChromosome implementation)
+        double mutationRate = 0.2;
         //endregion
 
         //region Instantiation
@@ -14,18 +14,17 @@ public class main {
         pop.setMutationRate(mutationRate);
 
         // Add popSize Chromosomes to the population
-        for (int i = 1; i < popSize; i++) {
-            BinaryChromosome c = new BinaryChromosome(8);
-            for (int j = 0; j < c.getBits().length; j++) {
-                System.out.print(c.getBits()[j]);
-            }
-            System.out.println();
+        for (int i = 0; i < popSize; i++) {
+            BinaryChromosome c = new BinaryChromosome(32);
+            // randomize the binary chromosome (otherwise they will all be 0 and can't breed)
+            c.randomize();
             pop.addChromosome(c); // Use provided BinaryChromosome implementation
         }
         //endregion
 
         //region Breeding Loop
         double currentBestFitness = 0;
+        int genCount = 0;
         // Run to the breeding program numGenerations times
         for (int i = 0; i < numGenerations; i++) {
             // use .evaluate() to retrieve the Chromosome with the highest fitness
@@ -35,6 +34,7 @@ public class main {
             if (bestFitness > currentBestFitness) currentBestFitness = bestFitness;
             // print the current best fitness out to the console
             System.out.println("Current Best: " + currentBestFitness);
+            genCount++;
 
             // if the fitness of the individual meets or exceeds the desired fitness, stop breeding
             if (currentBestFitness >= fitnessGoal) break;
@@ -42,6 +42,7 @@ public class main {
             // use .breed() to create a new population (generation) using the most fit individuals
             pop.breed();
         }
+        System.out.println("Reached fitness goal of " + fitnessGoal + " in " + genCount + " generations. (" + currentBestFitness + " achieved)");
         //endregion
     }
 }
