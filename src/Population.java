@@ -22,7 +22,6 @@ public class Population {
         for (Chromosome c: chromosomes) {
             // get Fitness
             double fitness = c.getFitness();
-            System.out.println(fitness);
             // check if this fitness is higher than previous best
             if (fitness > bestFitness) {
                 // if it is, update the highestFitness
@@ -43,9 +42,9 @@ public class Population {
         for (Chromosome c: chromosomes) {
             // get Fitness
             double fitness = c.getFitness();
-            // check if this fitness is lower than previous lowest
+            // if this fitness is lower than previous lowest and isn't zero
             if (fitness < lowestFitness && fitness != 0) {
-                // if it is, update the lowestFitness
+                // update the lowestFitness
                 lowestFitness = fitness;
             }
         }

@@ -2,7 +2,7 @@ public class Main {
     public static void main(String[] args) {
         //region Config
         int popSize = 100; // number of Chromosomes in the population (100 is recommended starting point, but tweak as needed)
-        int numGenerations = 10000; // number of iterations the program will run (100k is recommended starting point, but tweak as needed)
+        int numGenerations = 100000; // number of iterations the program will run (100k is recommended starting point, but tweak as needed)
         double fitnessGoal = .99999; // desired fitness level (.98 used as default for BinaryChromosome implementation)
         double mutationRate = 0.2;
         //endregion
@@ -15,10 +15,11 @@ public class Main {
 
         // Add popSize Chromosomes to the population
         for (int i = 0; i < popSize; i++) {
-            BinaryChromosome c = new BinaryChromosome(32);
-            // randomize the binary chromosome (otherwise they will all be 0 and can't breed)
+            LineEquationChromosome c = new LineEquationChromosome(5, 13);
+            // randomize the chromosome's initial values
             c.randomize();
-            pop.addChromosome(c); // Use provided BinaryChromosome implementation
+            // add it to the population
+            pop.addChromosome(c);
         }
         //endregion
 
@@ -37,12 +38,19 @@ public class Main {
             genCount++;
 
             // if the fitness of the individual meets or exceeds the desired fitness, stop breeding
-            if (currentBestFitness >= fitnessGoal) break;
+            if (currentBestFitness >= fitnessGoal) {
+                System.out.println();
+                System.out.println("Reached fitness goal of " + fitnessGoal + " in " + genCount + " generations. (" + currentBestFitness + " achieved)");
+                break;
+            }
 
             // use .breed() to create a new population (generation) using the most fit individuals
             pop.breed();
         }
-        System.out.println("Reached fitness goal of " + fitnessGoal + " in " + genCount + " generations. (" + currentBestFitness + " achieved)");
+        if (currentBestFitness < fitnessGoal) {
+            System.out.println();
+            System.out.println("Did not reach fitness goal of " + fitnessGoal + " in allotted " + numGenerations + " generations. (" + currentBestFitness + " achieved)");
+        }
         //endregion
     }
 }
